@@ -97,9 +97,9 @@ class _BaseVector(FuzzyComparable):
 		except:
 			return False
 
-	def __feq__(self, other):
+	def __feq__(self, other, epsilon=EPSILON):
 		try:
-			return all(fuzzy_eq_numbers(c1, c2) for c1, c2 in zip(self._components, other))
+			return all(fuzzy_eq_numbers(c1, c2, epsilon) for c1, c2 in zip(self._components, other))
 		except:
 			return False
 
