@@ -21,6 +21,9 @@ def _vec_check_if_real_scalar(x, operation):
 	if (not isinstance(x, Real)):
 		raise ValueError("Can only %s vectors by real-valued scalars." % operation)
 
+class VectorException(Exception):
+	pass
+
 class _VectorMeta(type):
 
 	def __new__(cls, name, bases, kwargs, immutable=False):
@@ -177,6 +180,11 @@ class _BaseVector(FuzzyComparable):
 	def normalize(self):
 		return self / self.magnitude()
 
+	def angle_between(self, other, radians=False):
+ 	 	if (not isinstance(other, self.__class__)):
+ 	  		other = self.__class__(other)
+ 		return math.acos(self.dot(other)/(self.magnitude() * other.magnitude()))
+
 	def project_onto(self, other):
 		if (not isinstance(other, self.__class__)):
 			other = self.__class__(other)
@@ -240,11 +248,6 @@ class Vector2(_BaseVector, metaclass=_VectorMeta):
     	    angle = math.degrees(angle)
  	   return angle
 
- 	  def angle_between(self, other, radians=False):
- 	  	if (not isinstance(other, self.__class__)):
- 	  		other = self.__class__(other)
- 	  	return math.acos(self.dot(other)/(self.magnitude() * other.magnitude()))
-
 	def rotate(self, angle, anchor=(0, 0)):
     	x, y = self._components
     
@@ -303,6 +306,23 @@ class Vector3(_BaseVector, metaclass=_VectorMeta):
 				(u[1]*v[2] - u[2]*v[1])
 			)
 
+	def rotate(self, angle, axis, radians=False):
+		if (not radians):
+			angle = math.radians(angle)
+		if (not isinstance(angle, Vector3)):
+			angle = Vector3(*angle)
+		q = Quaternion(math.cos(angle), math.sin(angle) * axis)
+		p = Quaternion(0, *self)
+		if (fuzzy_eq_numbers(p.dot(axis), 0)):
+			rotated = q * p
+		else:
+			rotated = (q * p) * q.inverse()
+			# quaternion multiplication is not commutative
+		if (not fuzzy_eq_numbers(rotated.scalar, 0)):
+			raise VectorException("Error: could not rotate vector (quaternion was not pure).")
+		return self.__class__(rotated.y, rotated.z, rotated.w)
+
+
 class ImmutableVector3(Vector3, immutable=True):
 	pass
 
@@ -314,6 +334,18 @@ class ImmutableVector4(Vector4, immutable=True):
 	pass
 
 class Quaternion(ImmutableVector4):
+
+	@classmethod
+	def i(cls):
+		return cls(0, 1, 0, 0)
+
+	@classmethod
+	def j(cls):
+		return cls(0, 0, 1, 0)
+
+	@classmethod
+	def k(cls):
+		return cls(0, 0, 0, 1)
 	
 	@property
 	def scalar(self):
@@ -323,33 +355,40 @@ class Quaternion(ImmutableVector4):
 	def vector(self):
 		return ImmutableVector3(self.y, self.z, self.w)
 
-	@property
-	def i(self):
-		return self.y
+	def as_ordered_pair(self):
+		return self.x, ImmutableVector3(self.y, self.z, self.w)
 
-	@property
-	def j(self):
-		return self.z
+	def conjugate(self):
+		return Quaternion(self.x, -self.y, -self.z, -self.w)
 
-	@property
-	def k(self):
-		return self.w
+	def inverse(self):
+		return self.conjugate() / self.magnitude_squared()
+
+	def exp(self):
+		a, b, c, d = self._components
+		v = math.sqrt(b*b + c*c + d*d)
+		x = math.cos(v)
+		m = math.sin(v)/v
+		y = b*m
+		z = c*m
+		w = d*m
+		return math.exp(a) * Quaternion(x, y, z, w)
 
 	def __mul__(self, other):
 		if (isinstance(other, Number)):
 			return super().__mul__(other)
-		r0, r1, r2, r3 = self
-		q0, q1, q2, q3 = other
-		t0 = r0 * q0 - r1 * q1 - r2 * q2 - r3 * q3
-		t1 = r0 * q1 + r1 * q0 - r2 * q3 + r3 * q2
-		t2 = r0 * q2 + r1 * q3 + r2 * q0 - r3 * q1
-		t3 = r0 * q3 - r1 * q2 + r2 * q1 + r3 * q0
-		return Quaternion(t0, t1, t2, t3)
+		s1, a = self.as_ordered_pair()
+		s2, b = Quaternion(*other)
+	
+		s3 = s1*s2 - a.dot(b)
+		c = s1*b + s2*a + a.cross(b)
+
+		return Quaternion(s3, *c)
 
 	def __div__(self, other):
 		if (isinstance(other, Number)):
 			return super().__div__(other)
-		r0, r1, r2, r3 = self
+		r0, r1, r2, r3 = self._components
 		q0, q1, q2, q3 = other
 		m = r0 * r0 + r1 * r1 + r2 * r2 + r3 * r3
 		t0 = r0 * q0 + r1 * q1 + r2 * q2 + r3 * q3
