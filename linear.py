@@ -138,6 +138,27 @@ class _Line3DBase(_LineBase):
 
 class Line2D(_Line2DBase):
 
+	@property
+	def y_intercept(self):
+		x1, y1 =  self._start
+		x2, y2 = self._end
+		if x1 == x2:
+		    return None
+		m = self._slope
+		return y1 - m*x1
+
+	@property
+	def x_intercept(self):
+		x1, y1 = self._start
+		x2, y2 = self._end
+		if y1 == y2:
+		    return None
+		if x1 == x2:
+		    return x1
+		m = self._slope
+		b = self._y_intercept
+		return -b/m
+
 	def is_point_in_range(self, point):
 		return True
 
