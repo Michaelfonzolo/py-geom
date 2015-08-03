@@ -1,11 +1,11 @@
 import math
 import random
 from numbers import Real
-from .compat import requires
 from .utils import get_in_bases
+from .compat import *
 from .fuzzy import *
 
-numpy = requires("numpy")
+numpy = try_import("numpy")
 
 def _make_zeros(n):
 	if (numpy is None):
@@ -195,7 +195,20 @@ class _BaseVector(FuzzyComparable):
 
         return other * scalar
 
-class Vector2(_BaseVector, metaclass=_VectorMeta):
+    def is_orthogonal(self, epsilon=EPSILON):
+    	non_zero_components = 0
+    	for c in self._components:
+    		if (not fuzzy_eq_numbers(c, 0, epsilon)):
+    			non_zero_components += 1
+    	return non_zero_components == 1
+
+
+class VectorType(_BaseVector):
+
+	def __init__(self, *args):
+		raise TypeError("Cannot instantiate class 'VectorType'.")
+
+class Vector2(VectorType, metaclass=_VectorMeta):
 
 	__components__ = ("x", "y")
 
@@ -288,7 +301,7 @@ class Vector2(_BaseVector, metaclass=_VectorMeta):
 class ImmutableVector2(Vector2, immutable=True):
 	pass
 
-class Vector3(_BaseVector, metaclass=_VectorMeta):
+class Vector3(VectorType, metaclass=_VectorMeta):
 
 	__components__ = ("x", "y", "z")
 
@@ -326,7 +339,7 @@ class Vector3(_BaseVector, metaclass=_VectorMeta):
 class ImmutableVector3(Vector3, immutable=True):
 	pass
 
-class Vector4(_BaseVector, metaclass=_VectorMeta):
+class Vector4(VectorType, metaclass=_VectorMeta):
 
 	__components__ = ("x", "y", "z", "w")
 
@@ -404,5 +417,29 @@ class Quaternion(ImmutableVector4):
 		return other.__div__(self)
 	__rtruediv__ = __rdiv__
 
-	    
-	
+def to_vector(iterable, immutable=False):
+	l = len(iterable)
+	if (l == 2):
+		return ImmutableVector2(*iterable) if immutable else Vector2(*iterable)
+	elif (l == 3):
+		return ImmutableVector3(*iterable) if immutable else Vector3(*iterable)
+	elif (l == 4):
+		return ImmutableVector4(*iterable) if immutable else Vector4(*iterable)
+	raise ValueError("No vector with %i comonents." % l)
+
+def change_vector_dimension(v, n, immutable=False):
+	l = len(v)
+	components = []
+	for c in v:
+		components.append(c)
+	components = components[:n]
+	if (len(components) < n):
+		components.extend([0 for 0 in range(n - len(components))])
+	return to_vector(components, immutable)
+
+def rectify_vector(v1, v2, immutable=False):
+	return change_vector_dimension(v2, len(v1), immutable)
+
+def rectify_vectors(*vectors, immutable=False):
+	dimension = len(max(vectors, key=len))
+	return [change_vector_dimension(v, dimension, immutable) for v in vectors]
