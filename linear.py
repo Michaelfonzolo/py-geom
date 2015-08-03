@@ -31,6 +31,16 @@ class _LineBase(object):
 		s1, e1, s2, e2 = rectify_vectors(self._start, self._end, other[0], other[1])
 		return fuzzy_eq(e1 - s1, e2 - s2, epsilon)
 
+	def contains_point(self, point, epsilon=EPSILON):
+		p = change_vector_dimension(point, self.__dimension__)
+		b = p - self._start
+		d = self._end - self._start
+		t0 = b[0]/d[0]
+		for c1, c2 in zip(b, d):
+			if (not fuzzy_eq_numbers(c1/c2, t0, epsilon)):
+				return False
+		return True
+
 	def perpendicular_distance(self, point):
 		a = self._start
 		p = rectify_vector(a, point)
