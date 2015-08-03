@@ -106,7 +106,7 @@ class _BaseVector(FuzzyComparable):
 
 
 	## Originally, the following methods were going to be included in the
-	## ``if (numpy is None):`` block, and there wer separate numpy-compatible 
+	## ``if (numpy is None):`` block, and there were separate numpy-compatible 
 	## methods, but for such low component counts (2, 3, and 4), there was no
 	## gain in speed most of the time.
 
@@ -186,7 +186,7 @@ class Vector2(_BaseVector, metaclass=_VectorMeta):
 	game_down = up
 
 class ImmutableVector2(Vector2, immutable=True):
-	
+
 	pass
 
 class Vector3(_BaseVector, metaclass=_VectorMeta):
