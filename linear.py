@@ -17,6 +17,10 @@ class _LineBase(object):
 			return self._end
 		raise IndexError("%s index out of range" % self.__class__.__name__)
 
+	def length(self):
+		return float('inf')
+	length_squared = length
+
 	def is_point_in_range(self, point):
 		raise NotImplementedError()
 
@@ -132,6 +136,13 @@ class _Line2DBase(_LineBase):
 
 	is_parallel_with = is_skew_with
 
+	def is_to_the_left(self, point):
+		px, py = point
+		x1, y1 = self._start
+		x2, y2 = self._end
+		result = (x2 - x1)*(py - y2) - (y2 - y1)*(px - x2)
+		return result < 0
+
 class _Line3DBase(_LineBase):
 
 	__dimension__ = 3
@@ -162,9 +173,6 @@ class Line2D(_Line2DBase):
 	def is_point_in_range(self, point):
 		return True
 
-	def length(self):
-		return float('inf')
-
 class Ray2D(_Line2DBase):
 
 	def is_point_in_range(self, point):
@@ -172,11 +180,8 @@ class Ray2D(_Line2DBase):
 		x1, y1 = self._start
 		x2, y2 = self._end
 		if x1 == x2:
-		    return (y1 < py) == (y1 < y2)
-		return (x1 < px) == (x1 < x2)
-
-	def length(self):
-		return float('inf')
+		    return (y1 <= py) == (y1 <= y2)
+		return (x1 <= px) == (x1 <= x2)
 
 class Segment2D(_Line2DBase):
 
@@ -185,13 +190,42 @@ class Segment2D(_Line2DBase):
 		x1, y1 = self._start
 		x2, y2 = self._end
 		if x1 == x2:
-		    return (y1 < py) == (py < y2)
-		return (x1 < px) == (px < x2)
+		    return (y1 <= py) == (py <= y2)
+		return (x1 <= px) == (px <= x2)
 
 	def length(self):
 		return (self._end - self._start).magnitude()
+
+	def length_squared(self):
+		return (self._end - self._start).magnitude_squared()
 
 class Line3D(_Line3DBase):
 
 	def is_point_in_range(self, point):
 		return True
+
+class Ray3D(_Line3DBase):
+
+	def is_point_in_range(self, point):
+		px, py, pz = change_vector_dimension(point, self.__dimension__)
+		x1, y1, z1 = self._start
+		x2, y2, z2 = self._end
+		return (x1 <= px) == (x1 <= x2) and
+			   (y1 <= py) == (y1 <= y2) and
+			   (z1 <= pz) == (z1 <= z2)
+
+class Segment3D(_Line3DBase):
+
+	def is_point_in_range(self, point):
+		px, py, pz = change_vector_dimension(point, self.__dimension__)
+		x1, y1, z1 = self._start
+		x2, y2, z2 = self._end
+		return (x1 <= px) == (px <= x2) and
+			   (y1 <= py) == (py <= y2) and
+			   (z1 <= pz) == (pz <= z2)
+
+	def length(self):
+		return (self._end - self._start).magnitude()
+
+	def length_squared(self):
+		return (self._end - self._start).magnitude_squared()
