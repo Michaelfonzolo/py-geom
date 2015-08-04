@@ -39,7 +39,6 @@ class _VectorMeta(type):
         if (components is None):
             components = get_in_bases("__components__", bases)
 
-
         if (components is not None):
             c = len(components)
             _VectorMeta.create_properties(components, kwargs, immutable)
