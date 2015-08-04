@@ -6,7 +6,8 @@ pygame = try_import("pygame")
 
 __all__ = ["Rect"]
 
-class Rect(object):
+@fill_in_fne
+class Rect(FuzzyComparable):
 
 	def __init__(self, x, y, w, h):
 		self.center = ImmutableVector2(x, y)
@@ -26,10 +27,16 @@ class Rect(object):
 		return iter([self.center.x, self.center.y, self.width, self.height])
 
 	def __eq__(self, other):
-		return all(self[i] == other[i] for i in range(4))
+		try:
+			return all(self[i] == other[i] for i in range(4))
+		except:
+			return False
 
 	def __feq__(self, other, epsilon=EPSILON):
-		return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(4))
+		try:
+			return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(4))
+		except:
+			return False
 
 	def __getitem__(self, index):
 		if (index == 0):

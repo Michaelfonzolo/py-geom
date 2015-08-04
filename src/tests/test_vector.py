@@ -51,6 +51,7 @@ class TestQuaternions(unittest.TestCase):
 		## Same here (too lazy to make an assertFuzzyEqual)
 		# self.assertEqual(q1.exp(), Quaternion(1.69392272368, -0.789559624542, -1.18433943681, -1.57911924908))
 
+## Too lazy to figure out how unittest is supposed to be used (unittest.main doesn't seem to work, idk why and idc)
 vectors = TestVectors()
 vectors.test_constructors()
 vectors.test_arithmetic()

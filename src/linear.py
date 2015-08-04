@@ -10,7 +10,8 @@ __all__ = [
 	"Ray2D", "Segment2D", "Line3D", "Ray3D", "Segment3D"
 	]
 
-class _LineBase(object):
+@fill_in_fne
+class _LineBase(FuzzyComparable):
 
 	def __init__(self, start, end):
 		self._start = change_vector_dimension(start, self.__dimension__, True)
@@ -23,10 +24,16 @@ class _LineBase(object):
 		return iter([self._start, self._end])
 
 	def __eq__(self, other):
-		return all(self[i] == other[i] for i in range(2))
+		try:
+			return all(self[i] == other[i] for i in range(2))
+		except:
+			return False
 
 	def __feq__(self, other, epsilon=EPSILON):
-		return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(2))
+		try:
+			return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(2))
+		except:
+			return False
 
 	def __getitem__(self, index):
 		if (index == 0):

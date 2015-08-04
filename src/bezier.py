@@ -2,6 +2,7 @@ import math
 
 from .vector import *
 from .compat import *
+from .fuzzy import *
 
 scipy = try_import("scipy.integrate")
 
@@ -13,10 +14,39 @@ def _choose(n, k):
 def bernstein(i, n, x):
 	return _choose(n, i)*x**i*(1 - x)**(n - i)
 
-class BezierCurve(object):
+@fill_in_fne
+class BezierCurve(FuzzyComparable):
 
 	def __init__(self, *control_polygon):
 		self.control_polygon = rectify_vectors(*control_polygon, immutable=True)
+
+	def __repr__(self):
+		string = "%s(" % self.__class__.__name__
+		n = len(self.control_polygon)
+		for i, v in enumerate(self.control_polygon):
+			if (i == n - 1):
+				string += str(v)
+			else:
+				string += str(v) + ", "
+		return string + ")"
+
+	def __iter__(self):
+		return iter(self.control_polygon)
+
+	def __len__(self):
+		return len(self.control_polygon)
+
+	def __eq__(self, other):
+		try:
+			return len(self) == len(other) and all(self[i] == other[i] for i in range(len(self)))
+		except:
+			return False
+
+	def __feq__(self, other):
+		try:
+			return len(self) == len(other) and all(fuzzy_eq(self[i], other[i]) for i in range(len(self)))
+		except:
+			return False
 
 	def evaluate_at(self, time):
 		cp = self.control_polygon

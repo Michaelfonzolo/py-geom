@@ -9,7 +9,8 @@ scipy = try_import("scipy.special")
 
 __all__ = ["Ellipse", "Ellipsoid3D"]
 
-class Ellipse(object):
+@fill_in_fne
+class Ellipse(FuzzyComparable):
 
 	def __init__(self, x, y, a, b):
 		self.center = ImmutableVector2(x, y)
@@ -40,10 +41,16 @@ class Ellipse(object):
 		return iter([self.center.x, self.center.y, self.a, self.b])
 
 	def __eq__(self, other):
-		return all(self[i] == other[i] for i in range(4))
+		try:
+			return all(self[i] == other[i] for i in range(4))
+		except:
+			return False
 
 	def __feq__(self, other, epsilon=EPSILON):
-		return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(4))
+		try:
+			return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(4))
+		except:
+			return False
 
 	@property
 	def eccentricity(self):
@@ -73,7 +80,8 @@ class Ellipse(object):
 	def translate(self, delta):
 		self.center += change_vector_dimension(delta, 2)
 
-class Ellipsoid3D(object):
+@fill_in_fne
+class Ellipsoid3D(FuzzyComparable):
 
 	__dimension__ = 3
 
@@ -112,10 +120,16 @@ class Ellipsoid3D(object):
 		return iter([self.center.x, self.center.y, self.center.z, self.a, self.b, self.c])
 
 	def __eq__(self, other):
-		return all(self[i] == other[i] for i in range(6))
+		try:
+			return all(self[i] == other[i] for i in range(6))
+		except:
+			return False
 
 	def __feq__(self, other, epsilon=EPSILON):
-		return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(6))
+		try:
+			return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(6))
+		except:
+			return False
 
 	if (scipy is None):
 
