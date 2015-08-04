@@ -183,6 +183,16 @@ class _Line3DBase(_LineBase):
 
 	__dimension__ = 3
 
+	def distance_to_line(self, other):
+		s1, e1 = self
+		s2, e2 = other
+		s2 = change_vector_dimension(s2, 3)
+		e2 = change_vector_dimension(e2, 3)
+		a, c = s1, s2
+		b, d = e1 - s1, e2 - s2
+		n = b.cross(d).normalize()
+		return (n.dot(c - a)).magnitude()
+
 class Line2D(_Line2DBase):
 
 	@property
