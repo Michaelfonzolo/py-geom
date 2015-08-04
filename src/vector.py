@@ -145,7 +145,6 @@ class _BaseVector(FuzzyComparable):
     def __setitem__(self, index, value):
         self._components[index] = value
 
-
     ## Originally, the following methods were going to be included in the
     ## ``if (numpy is None):`` block, and there were separate numpy-compatible 
     ## methods, but for such low component counts (2, 3, and 4), there was no
@@ -323,7 +322,6 @@ class Vector2(VectorType, metaclass=_VectorMeta):
             angle = math.degrees(angle)
         return angle
 
-
 class ImmutableVector2(Vector2, immutable=True):
     pass
 
@@ -359,7 +357,6 @@ class Vector3(VectorType, metaclass=_VectorMeta):
         if (not fuzzy_eq_numbers(rotated.scalar, 0)):
             raise VectorException("Error: could not rotate vector (quaternion was not pure).")
         return self.__class__(rotated.y, rotated.z, rotated.w)
-
 
 class ImmutableVector3(Vector3, immutable=True):
     pass
