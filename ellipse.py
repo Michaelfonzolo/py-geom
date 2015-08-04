@@ -5,8 +5,7 @@ from .vector import *
 from .fuzzy import *
 from .functools import reduce
 
-scipy = try_import("scipy")
-
+scipy = try_import("scipy.special")
 
 class Ellipse(object):
 
