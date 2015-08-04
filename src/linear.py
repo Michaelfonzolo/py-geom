@@ -112,6 +112,11 @@ class _LineBase(FuzzyComparable):
 		V = abs(numpy.linalg.det(A))
 		return fuzzy_eq_numbers(V, 0, epsilon)
 
+	def as_vector_function(self):
+		d = (self._end - self._start).normalize()
+		a = self._start
+		return lambda t : a + t*d
+
 class _Line2DBase(_LineBase):
 
 	__dimension__ = 2

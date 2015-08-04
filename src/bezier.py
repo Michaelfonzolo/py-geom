@@ -68,8 +68,11 @@ class BezierCurve(FuzzyComparable):
 		step = 1/line_segments
 		tn = 0
 		arclength = 0
+		previous = self.evaluate_at(tn)
 		for i in range(line_segments):
-			arclength += (self.evaluate_at(tn) + self.evaluate_at(tn + step)).magnitude()
+			next = self.evaluate_at(tn + step)
+			arclength += (next - previous).magnitude()
+			previous = next
 			tn += step
 		return arclength
 
