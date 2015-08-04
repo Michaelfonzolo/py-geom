@@ -288,7 +288,7 @@ class Vector2(VectorType, metaclass=_VectorMeta):
             angle = math.degrees(angle)
         return angle
 
-    def rotate(self, angle, anchor=(0, 0)):
+    def rotate(self, angle, anchor=(0, 0), radians=False):
         x, y = self._components
     
         x = x - anchor[0]
@@ -349,9 +349,8 @@ class Vector3(VectorType, metaclass=_VectorMeta):
     def rotate(self, angle, axis, radians=False):
         if (not radians):
             angle = math.radians(angle)
-        if (not isinstance(angle, Vector3)):
-            angle = Vector3(*angle)
-        q = Quaternion(math.cos(angle), math.sin(angle) * axis)
+        axis = change_vector_dimension(axis, 3)
+        q = Quaternion(math.cos(angle), *(math.sin(angle) * axis))
         p = Quaternion(0, *self)
         if (fuzzy_eq_numbers(p.dot(axis), 0)):
             rotated = q * p
