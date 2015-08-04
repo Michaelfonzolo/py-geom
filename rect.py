@@ -1,7 +1,10 @@
 from .vector import *
 from .compat import *
+from .fuzzy import *
 
 pygame = try_import("pygame")
+
+__all__ = ["Rect"]
 
 class Rect(object):
 
@@ -11,7 +14,7 @@ class Rect(object):
 		self.height = h
 
 	def __repr__(self):
-		return "%s(%s, %s, %s)" %
+		return "%s(%s, %s, %s)" % \
 			(
 				self.__class__.__name__,
 				self.center,
@@ -65,7 +68,7 @@ class Rect(object):
 	def contains_point(self, point):
 		x, y, w, h = self
 		px, py = point
-		return (x <= px) == (px <= x + w) and
+		return (x <= px) == (px <= x + w) and \
 			   (y <= py) == (py <= y + h)
 
 	def collides_rect(self, rect):
@@ -121,6 +124,6 @@ class Rect(object):
 
 		return Rect(x1, y1, max(w1, w2), max(h1, h2))
 
-	@requries("pygame")
+	@requires("pygame")
 	def to_pygame_rect(self):
 		return pygame.Rect(self.center.x, self.center.y, self.width, self.height)

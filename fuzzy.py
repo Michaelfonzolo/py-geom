@@ -1,5 +1,7 @@
 from numbers import Real
 
+__all__ = ["FuzzyComparable", "EPSILON", "fuzzy_eq_numbers", "fuzzy_eq", "fill_in_fne"]
+
 EPSILON = 1e-8
 
 class FuzzyComparable(object):

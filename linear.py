@@ -5,6 +5,11 @@ from .fuzzy import *
 
 numpy = try_import("numpy")
 
+__all__ = [
+	"_LineBase", "_Line2DBase", "_Line3DBase", "Line2D", 
+	"Ray2D", "Segment2D", "Line3D", "Ray3D", "Segment3D"
+	]
+
 class _LineBase(object):
 
 	def __init__(self, start, end):
@@ -116,7 +121,6 @@ class _Line2DBase(_LineBase):
 		s1, e1, s2, e2 = rectify_vectors(self._start, self._end, other[0], other[1])
 		if (len(s1) != self.__dimension__):
 			return super()._poi(other)
-		poi = self.
 		x1, y1 = s1
 		x2, y2 = e1
 		x3, y3 = s2
@@ -233,8 +237,8 @@ class Ray3D(_Line3DBase):
 		px, py, pz = change_vector_dimension(point, self.__dimension__)
 		x1, y1, z1 = self._start
 		x2, y2, z2 = self._end
-		return (x1 <= px) == (x1 <= x2) and
-			   (y1 <= py) == (y1 <= y2) and
+		return (x1 <= px) == (x1 <= x2) and \
+			   (y1 <= py) == (y1 <= y2) and \
 			   (z1 <= pz) == (z1 <= z2)
 
 class Segment3D(_Line3DBase):
@@ -243,8 +247,8 @@ class Segment3D(_Line3DBase):
 		px, py, pz = change_vector_dimension(point, self.__dimension__)
 		x1, y1, z1 = self._start
 		x2, y2, z2 = self._end
-		return (x1 <= px) == (px <= x2) and
-			   (y1 <= py) == (py <= y2) and
+		return (x1 <= px) == (px <= x2) and \
+			   (y1 <= py) == (py <= y2) and \
 			   (z1 <= pz) == (pz <= z2)
 
 	def length(self):

@@ -2,10 +2,12 @@ import math
 
 from .exception import *
 from .vector import *
+from .compat import *
 from .fuzzy import *
-from .functools import reduce
 
 scipy = try_import("scipy.special")
+
+__all__ = ["Ellipse", "Ellipsoid3D"]
 
 class Ellipse(object):
 
@@ -15,7 +17,7 @@ class Ellipse(object):
 		self.b = b
 
 	def __repr__(self):
-		return "%s(%s, %s, %s)" %
+		return "%s(%s, %s, %s)" % \
 			(
 				self.__class__.__name__,
 				self.center,
@@ -82,7 +84,7 @@ class Ellipsoid3D(object):
 		self.c = c
 
 	def __repr__(self):
-		return "%s(%s, %s, %s, %s)" %
+		return "%s(%s, %s, %s, %s)" % \
 			(
 				self.__class__.__name__,
 				self.center,
@@ -139,8 +141,8 @@ class Ellipsoid3D(object):
 				)
 
 	def is_spherical(self, epsilon=EPSILON):
-		return fuzzy_eq_numbers(self.a, self.b, EPSILON) and 
-			   fuzzy_eq_numbers(self.b, self.c, EPSILON) and
+		return fuzzy_eq_numbers(self.a, self.b, EPSILON) and \
+			   fuzzy_eq_numbers(self.b, self.c, EPSILON) and \
 			   fuzzy_eq_numbers(self.a, self.c, EPSILON)
 			   # fuzzy_eq(a, b) and fuzzy_eq(b, c) does not imply fuzzy_eq(a, c)
 
