@@ -76,6 +76,8 @@ class _LineBase(FuzzyComparable):
 	@requires("numpy")
 	def point_of_intersection(self, other):
 		poi = self._poi(other)
+		if (poi is None):
+			return poi
 		is_in_range = self.is_point_in_range(poi)
 		if (is_in_range and isinstance(other, _LineBase)):
 			is_in_range &= other.is_point_in_range(poi)
