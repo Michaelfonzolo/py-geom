@@ -1,6 +1,6 @@
 import math
 import random
-from numbers import Real
+from numbers import Real, Number
 from .utils import get_in_bases
 from .compat import *
 from .fuzzy import *
@@ -228,7 +228,6 @@ class _BaseVector(FuzzyComparable):
                 non_zero_components += 1
         return non_zero_components == 1
 
-
 class VectorType(_BaseVector):
 
     def __init__(self, *args):
@@ -340,9 +339,9 @@ class Vector3(VectorType, metaclass=_VectorMeta):
         else:
             v = other
         return self.__class__(
-                (u[1]*v[2] - u[2]*v[1]),
-                (u[3]*v[1] - u[1]*v[3]),
-                (u[1]*v[2] - u[2]*v[1])
+                (u[0]*v[1] - u[1]*v[0]),
+                (u[2]*v[0] - u[0]*v[2]),
+                (u[0]*v[1] - u[1]*v[0])
             )
 
     def rotate(self, angle, axis, radians=False):
@@ -417,7 +416,7 @@ class Quaternion(ImmutableVector4):
         if (isinstance(other, Number)):
             return super().__mul__(other)
         s1, a = self.as_ordered_pair()
-        s2, b = Quaternion(*other)
+        s2, b = Quaternion(*other).as_ordered_pair()
     
         s3 = s1*s2 - a.dot(b)
         c = s1*b + s2*a + a.cross(b)

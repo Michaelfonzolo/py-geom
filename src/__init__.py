@@ -7,6 +7,8 @@ from .vector import *
 
 __all__ = []
 
+from .tests import *
+
 __all__.extend(bezier.__all__)
 __all__.extend(ellipse.__all__)
 __all__.extend(fuzzy.__all__)
