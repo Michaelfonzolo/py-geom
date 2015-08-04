@@ -122,7 +122,7 @@ class _BaseVector(FuzzyComparable):
 
     def __eq__(self, other):
         try:
-            return all(c1 == c2 for c1, c2 in zip(self._components, other))
+            return len(self) == len(other) and all(c1 == c2 for c1, c2 in zip(self._components, other))
         except:
             return False
 
