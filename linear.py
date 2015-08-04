@@ -1,3 +1,4 @@
+from .exception import *
 from .vector import *
 from .compat import *
 from .fuzzy import *
@@ -10,12 +11,24 @@ class _LineBase(object):
 		self._start = change_vector_dimension(start, self.__dimension__, True)
 		self._end = change_vector_dimension(end, self.__dimension__, True)
 
+	def __repr__(self):
+		return "%s(%s -> %s)" % (self.__class__.__name__, str(self._start), str(self._end))
+
+	def __iter__(self):
+		return iter([self._start, self._end])
+
+	def __eq__(self, other):
+		return all(self[i] == other[i] for i in range(2))
+
+	def __feq__(self, other, epsilon=EPSILON):
+		return all(fuzzy_eq_numbers(self[i], other[i], epsilon) for i in range(2))
+
 	def __getitem__(self, index):
 		if (index == 0):
 			return self._start
 		elif (index == 1):
 			return self._end
-		raise IndexError("%s index out of range" % self.__class__.__name__)
+		raise index_out_of_range(type(self))
 
 	def length(self):
 		return float('inf')

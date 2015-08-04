@@ -36,3 +36,4 @@ def _try_import(name):
 
 _try_import("numpy")
 _try_import("scipy")
+_try_import("pygame")

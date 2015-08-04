@@ -85,6 +85,16 @@ class _BaseVector(FuzzyComparable):
 		vec = cls.random()
 		return vec.normalize()
 
+	def __repr__(self):
+		string = "<"
+		n = len(self._components)
+		for i, c in enumerate(self._components):
+			if i == n - 1:
+				string += "%s" % str(c)
+			else:
+				string += "%s, " % str(c)
+		return string + ">"
+
 	def __pos__(self):
 		return self
 
