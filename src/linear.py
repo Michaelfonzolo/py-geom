@@ -54,7 +54,7 @@ class _LineBase(FuzzyComparable):
 
 	def is_parallel_with(self, other, epsilon=EPSILON):
 		s1, e1, s2, e2 = rectify_vectors(self._start, self._end, other[0], other[1])
-		return fuzzy_eq(e1 - s1, e2 - s2, epsilon)
+		return fuzzy_eq((e1 - s1).normalize(), (e2 - s2).normalize(), epsilon)
 
 	def contains_point(self, point, epsilon=EPSILON):
 		p = change_vector_dimension(point, self.__dimension__)
